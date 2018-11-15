@@ -8,6 +8,8 @@
  * Connect the (TTL level) clock signal to pin 8 (and ground to GND) - e.g. 
  * DIN Sync Pin 3 to Arduino Uno Pin 8, DIN Pin 2 to any GND terminal on the Uno 
  * 
+ * needs Schmitt Trigger for unstable signals
+ * 
  * Copyright 2018 Sevo Stille <mailto:sevo@radiox.de>
  * @license GPL-3.0+ <http://www.gnu.org/licenses/gpl.html>
  * 
