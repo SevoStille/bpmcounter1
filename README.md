@@ -5,8 +5,9 @@ BPM Counter by arduino timer
  * 
  * Small utility to display BPM, clock Hz and ms on a 16x2 I2C LED display 
  * Written for DIN Sync devices like the TR-606.  
- * Counts time between pulses on external timer 
- * 
+ * High accuracy version, counts time between pulses on external timer 
+ *
+ *
  * Connect the clock signal to pin 8 (and ground to GND) - e.g. 
  * DIN Sync Pin 3 to Arduino Uno Pin 8, DIN Pin 2 to any GND terminal on the Uno 
  * 
