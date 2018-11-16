@@ -3,8 +3,13 @@
  * 
  * Small utility to display BPM on a 16x2 I2C LED display 
  * Written for DIN Sync devices like the TR-606.  
- * Counts time between pulses on external timer 
+ * High accuracy version, counts time between pulses on external timer 
  * 
+ * Beware, high-precision timing on Arduinos will depend on the system speed and clock 
+ * settings. I set up the timer attached to the DIN sync, but other timers may affect 
+ * resolution and speed too. You may have to tweak the prescaler (256) and factor (16) 
+ * on anything other than a default configured Arduino/Genuino Uno. 
+ *
  * Connect the (TTL level) clock signal to pin 8 (and ground to GND) - e.g. 
  * DIN Sync Pin 3 to Arduino Uno Pin 8, DIN Pin 2 to any GND terminal on the Uno 
  * 
@@ -60,7 +65,7 @@ const unsigned int ticks_per_beat =  24;
 
   void StartTimer1(void)
   {
-  //Start timer without prescaler
+  //Start timer with 256 prescaler (CS12)
 
   // J: Note that we know that the other CS bits are 0 becuase of the Assignment in InitTimer
   TCCR1B |= (1<<CS12);  
