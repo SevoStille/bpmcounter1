@@ -38,20 +38,19 @@ const unsigned int ticks_per_beat =  24;
 
   volatile timer_state_t flag = WAIT;
 
-  // J:This is a 16-bit timer, so these values will always fit into an unsigned int
   volatile unsigned int Capt1, Capt2, CaptOvr;
 
-  // J:Mind as well make this unsigned and give it 2x range since it can never be negative. 
   volatile unsigned long T1Ovs;
 
   void InitTimer1(void)
   {
      //Set Initial Timer value
-     // J:All measurements against TCNT are relative, so no need to reset
+     // All measurements against TCNT are relative, so no need to reset
      // TCNT1=0;
 
-     // J: Note we need to set up all the timer control bits because we do not know what state they are in
-     // J: If, for example, the WGM bits are set to a PWM mode then the TCNT is going to be resetting out from under us rather than monotonically counting up to MAX
+     // Note we need to set up all the timer control bits because we do not know what state they are in
+     // If, for example, the WGM bits are set to a PWM mode then the TCNT is going to be resetting out 
+    // from under us rather than monotonically counting up to MAX
 
      TCCR1A = 0x00;
 
@@ -67,7 +66,7 @@ const unsigned int ticks_per_beat =  24;
   {
   //Start timer with 256 prescaler (CS12)
 
-  // J: Note that we know that the other CS bits are 0 becuase of the Assignment in InitTimer
+  //  Note that we know that the other CS bits already are 0 because of the Assignment in InitTimer
   TCCR1B |= (1<<CS12);  
 
   //Enable global interrutps
@@ -81,7 +80,7 @@ const unsigned int ticks_per_beat =  24;
    case CAPTURE_1:
        Capt1 = ICR1;
 
-       // J: Reset the overflow to 0 each time we start a measurement
+       // Reset the overflow to 0 each time we start a measurement
        T1Ovs=0;
        doubleOverflowError=0;
        flag = CAPTURE_2;
@@ -90,12 +89,9 @@ const unsigned int ticks_per_beat =  24;
    case CAPTURE_2:
        Capt2 = ICR1;
 
-       // J: Grab a snap shot of the overflow count since the timer will keep counting (and overflowing);
+       // Grab a snap shot of the overflow count since the timer will keep counting (and overflowing);
        CaptOvr = T1Ovs;    
        flag = WAIT;
-
-       //J: Generally bad to print in ISRs
-       //Serial.println(flag);
 
        break;
       }
@@ -106,7 +102,7 @@ const unsigned int ticks_per_beat =  24;
   {
     T1Ovs++;
 
-    // J: Just to be correct, check for overflow of the overflow, otherwise if it overflows we would get an incorrect answer.
+    // check for overflow of the overflow, otherwise if it overflows we would get an incorrect answer.
     if (!T1Ovs) {
       doubleOverflowError=1;
     }
@@ -119,8 +115,8 @@ const unsigned int ticks_per_beat =  24;
 
     InitTimer1();
     StartTimer1();
-       lcd.init(); //Init display 
-   lcd.backlight(); //Power up backlight  
+     lcd.init(); //Init display 
+     lcd.backlight(); //Power up backlight  
      lcd.print("BPM Counter");           
      lcd.setCursor(0, 1);
      lcd.print("by sevo");          
@@ -132,21 +128,16 @@ const unsigned int ticks_per_beat =  24;
   }
 
   void loop() {
-    // J: No need to bracket this set with cli() becuase the counter will not be counting until wait is updated
-
+    
     flag = CAPTURE_1;
 
     while (flag != WAIT);
-
-
-    // J: Parenthesis and explicit cast for good luck! ( and to ensure correct size and order for operations) 
-
 
      if (doubleOverflowError) {
          Serial.println( "Double Overflow Error! Use a bigger prescaller!");
      } else {
          time = ( (unsigned long) (Capt2) + (CaptOvr * 0x10000UL) )-Capt1 ;
-     ms = time*16.0 + 0.0001;  // Prescaled to 256, timer res 16, add something to avoid div by zero
+     ms = time*16.0 + 0.0001;  // Prescaled to 256/16 (at timer res 16), add something small to avoid div by zero
      hz = 1000000.0/ms;
      bpm = (hz/ticks_per_beat)*60; // for ppq
 
