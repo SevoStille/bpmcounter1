@@ -14,6 +14,8 @@ BPM Counter by arduino timer
  * 7414 Schmitt Trigger for signal stabilisation, 2.2k pulldown, optionally 
  * optocoupler 
  * 
+ * PPQ and clock range are compile time adjustable
+ * 
  * Copyright 2018 Sevo Stille <mailto:sevo@radiox.de>
  * @license GPL-3.0+ <http://www.gnu.org/licenses/gpl.html>
  * 
